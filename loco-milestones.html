@@ -1,0 +1,1105 @@
+<!doctype html>
+<!-- saved from url=(0032)http://127.0.0.1:8000/milestones -->
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Loco Workshop, Ajmer — 150 Years of Industrial Majesty</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com/" />
+    <link href="./loco-milestones_files/css2" rel="stylesheet" />
+    <link rel="stylesheet" href="css/index.css" />
+    <link rel="stylesheet" href="css/booking.css" />
+
+    <script id="browser-logger-active">
+      (function () {
+        const ENDPOINT = "http://127.0.0.1:8000/_boost/browser-logs";
+        const logQueue = [];
+        let flushTimeout = null;
+
+        console.log(
+          "🔍 Browser logger active (MCP server detected). Posting to: " +
+            ENDPOINT,
+        );
+
+        // Store original console methods
+        const originalConsole = {
+          log: console.log,
+          info: console.info,
+          error: console.error,
+          warn: console.warn,
+          table: console.table,
+        };
+
+        // Helper to safely stringify values
+        function safeStringify(obj) {
+          const seen = new WeakSet();
+          return JSON.stringify(obj, (key, value) => {
+            if (typeof value === "object" && value !== null) {
+              if (seen.has(value)) return "[Circular]";
+              seen.add(value);
+            }
+            if (value instanceof Error) {
+              return {
+                name: value.name,
+                message: value.message,
+                stack: value.stack,
+              };
+            }
+            return value;
+          });
+        }
+
+        // Batch and send logs
+        function flushLogs() {
+          if (logQueue.length === 0) return;
+
+          const batch = logQueue.splice(0, logQueue.length);
+
+          fetch(ENDPOINT, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Requested-With": "XMLHttpRequest",
+            },
+            body: JSON.stringify({ logs: batch }),
+          }).catch((err) => {
+            // Silently fail to avoid infinite loops
+            originalConsole.error("Failed to send logs:", err);
+          });
+        }
+
+        // Debounced flush (100ms)
+        function scheduleFlush() {
+          if (flushTimeout) clearTimeout(flushTimeout);
+          flushTimeout = setTimeout(flushLogs, 100);
+        }
+
+        // Intercept console methods
+        ["log", "info", "error", "warn", "table"].forEach((method) => {
+          console[method] = function (...args) {
+            // Call original method
+            originalConsole[method].apply(console, args);
+
+            // Capture log data
+            try {
+              logQueue.push({
+                type: method,
+                timestamp: new Date().toISOString(),
+                data: args.map((arg) => {
+                  try {
+                    return typeof arg === "object"
+                      ? JSON.parse(safeStringify(arg))
+                      : arg;
+                  } catch (e) {
+                    return String(arg);
+                  }
+                }),
+                url: window.location.href,
+                userAgent: navigator.userAgent,
+              });
+
+              scheduleFlush();
+            } catch (e) {
+              // Fail silently
+            }
+          };
+        });
+
+        // Global error handlers for uncaught errors
+        const originalOnError = window.onerror;
+        window.onerror = function boostErrorHandler(
+          errorMsg,
+          url,
+          lineNumber,
+          colNumber,
+          error,
+        ) {
+          try {
+            logQueue.push({
+              type: "uncaught_error",
+              timestamp: new Date().toISOString(),
+              data: [
+                {
+                  message: errorMsg,
+                  filename: url,
+                  lineno: lineNumber,
+                  colno: colNumber,
+                  error: error
+                    ? {
+                        name: error.name,
+                        message: error.message,
+                        stack: error.stack,
+                      }
+                    : null,
+                },
+              ],
+              url: window.location.href,
+              userAgent: navigator.userAgent,
+            });
+
+            scheduleFlush();
+          } catch (e) {
+            // Fail silently
+          }
+
+          // Call original handler if it exists
+          if (originalOnError && typeof originalOnError === "function") {
+            return originalOnError(errorMsg, url, lineNumber, colNumber, error);
+          }
+
+          // Let the error continue to propagate
+          return false;
+        };
+        window.addEventListener("error", (event) => {
+          try {
+            logQueue.push({
+              type: "window_error",
+              timestamp: new Date().toISOString(),
+              data: [
+                {
+                  message: event.message,
+                  filename: event.filename,
+                  lineno: event.lineno,
+                  colno: event.colno,
+                  error: event.error
+                    ? {
+                        name: event.error.name,
+                        message: event.error.message,
+                        stack: event.error.stack,
+                      }
+                    : null,
+                },
+              ],
+              url: window.location.href,
+              userAgent: navigator.userAgent,
+            });
+
+            scheduleFlush();
+          } catch (e) {
+            // Fail silently
+          }
+
+          // Let the error continue to propagate
+          return false;
+        });
+        window.addEventListener("unhandledrejection", (event) => {
+          try {
+            logQueue.push({
+              type: "error",
+              timestamp: new Date().toISOString(),
+              data: [
+                {
+                  message: "Unhandled Promise Rejection",
+                  reason:
+                    event.reason instanceof Error
+                      ? {
+                          name: event.reason.name,
+                          message: event.reason.message,
+                          stack: event.reason.stack,
+                        }
+                      : event.reason,
+                },
+              ],
+              url: window.location.href,
+              userAgent: navigator.userAgent,
+            });
+
+            scheduleFlush();
+          } catch (e) {
+            // Fail silently
+          }
+
+          // Let the rejection continue to propagate
+          return false;
+        });
+
+        // Flush on page unload
+        window.addEventListener("beforeunload", () => {
+          if (logQueue.length > 0) {
+            navigator.sendBeacon(ENDPOINT, JSON.stringify({ logs: logQueue }));
+          }
+        });
+      })();
+    </script>
+  </head>
+
+  <body>
+    <div
+      class="cursor"
+      id="cursor"
+      style="transform: translate(846px, 401px)"
+    ></div>
+    <div
+      class="cursor-ring"
+      id="cursorRing"
+      style="transform: translate(830.511px, 385.619px)"
+    ></div>
+
+    <!-- NAV -->
+    <nav id="mainNav">
+      <a href="loco-index.html" class="nav-logo">
+        <div class="nav-logo-wheel">⚙</div>
+        <span>The Loco Workshop, Ajmer</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="loco-legacy.html">Legacy</a></li>
+        <li>
+          <a href="http://127.0.0.1:8000/milestones#capabilities"
+            >Capabilities</a
+          >
+        </li>
+        <li><a href="loco-milestones.html">Milestones</a></li>
+        <li><a href="http://127.0.0.1:8000/booking">Visit</a></li>
+        <li><a href="http://127.0.0.1:8000/milestones#gallery">Gallery</a></li>
+      </ul>
+      <a href="loco-booking.html" class="nav-cta">Plan a Visit</a>
+    </nav>
+
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- NAV -->
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-tracks-bg"></div>
+
+      <!-- Rotating gear -->
+      <svg
+        class="hero-gear-large"
+        viewBox="0 0 460 460"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+      >
+        <circle
+          cx="230"
+          cy="230"
+          r="180"
+          stroke="#C9973A"
+          stroke-width="1"
+        ></circle>
+        <circle
+          cx="230"
+          cy="230"
+          r="130"
+          stroke="#C9973A"
+          stroke-width="0.5"
+        ></circle>
+        <circle
+          cx="230"
+          cy="230"
+          r="55"
+          stroke="#C9973A"
+          stroke-width="1.2"
+        ></circle>
+        <circle
+          cx="230"
+          cy="230"
+          r="20"
+          stroke="#C9973A"
+          stroke-width="1"
+        ></circle>
+        <g stroke="#C9973A" stroke-width="12" stroke-linecap="square">
+          <line x1="222" y1="48" x2="238" y2="48"></line>
+          <line x1="222" y1="412" x2="238" y2="412"></line>
+          <line x1="48" y1="222" x2="48" y2="238"></line>
+          <line x1="412" y1="222" x2="412" y2="238"></line>
+          <line x1="94" y1="90" x2="104" y2="100"></line>
+          <line x1="356" y1="360" x2="366" y2="370"></line>
+          <line x1="366" y1="90" x2="356" y2="100"></line>
+          <line x1="104" y1="360" x2="94" y2="370"></line>
+        </g>
+        <g stroke="#C9973A" stroke-width="1.5">
+          <line x1="230" y1="50" x2="230" y2="130"></line>
+          <line x1="230" y1="330" x2="230" y2="410"></line>
+          <line x1="50" y1="230" x2="130" y2="230"></line>
+          <line x1="330" y1="230" x2="410" y2="230"></line>
+          <line x1="101" y1="101" x2="157" y2="157"></line>
+          <line x1="303" y1="303" x2="359" y2="359"></line>
+          <line x1="359" y1="101" x2="303" y2="157"></line>
+          <line x1="157" y1="303" x2="101" y2="359"></line>
+        </g>
+      </svg>
+
+      <div class="hero-content">
+        <div class="hero-eyebrow">1876 to 2026 · 150 Years</div>
+        <h1 class="hero-title">Mile<em>stones</em></h1>
+        <p class="hero-sub">
+          Six defining moments that shaped The Loco Workshop, Ajmer — from its
+          first locomotive to the dawn of the Vande Bharat era. A journey
+          measured not in miles, but in mastery.
+        </p>
+      </div>
+    </section>
+
+    <!-- STATS STRIP -->
+    <div class="intro-strip">
+      <div class="is-item">
+        <div class="is-num">1876</div>
+        <div class="is-label">Year<br />Established</div>
+      </div>
+      <div class="is-item">
+        <div class="is-num">1895</div>
+        <div class="is-label">First Loco<br />Built</div>
+      </div>
+      <div class="is-item">
+        <div class="is-num">467</div>
+        <div class="is-label">Locomotives<br />Manufactured</div>
+      </div>
+      <div class="is-item">
+        <div class="is-num">1949</div>
+        <div class="is-label">Final Steam<br />Loco Built</div>
+      </div>
+      <div class="is-item">
+        <div class="is-num">2026</div>
+        <div class="is-label">150th<br />Anniversary</div>
+      </div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="timeline-wrapper">
+      <div class="tl-header">
+        <div class="tl-tag reveal">A Century and a Half</div>
+        <h2 class="tl-title reveal rd1">
+          Six Moments That<br />Defined <em>An Institution</em>
+        </h2>
+      </div>
+
+      <!-- MILESTONE 1 — 1876 -->
+      <div class="milestone-entry reveal">
+        <div class="ms-left">
+          <div class="ms-year-big">1876</div>
+          <div class="ms-chapter-tag">Milestone I · Establishment</div>
+          <h3 class="ms-title">The Workshop<br />is <em>Born</em></h3>
+          <div class="ms-rule"></div>
+          <div class="ms-body">
+            <p>
+              Alongside the growing network of the Rajputana Malwa Railway,
+              there arose in Ajmer something more permanent than track. The
+              Workshop was established — at first modest in intent, its purpose
+              was maintenance. Inspection, repair, overhaul. Nothing more
+              ambitious was expected of it.
+            </p>
+            <p>
+              But workshops, like men, are rarely confined to their original
+              purpose. The air carried the smell of oil and hot metal. The sound
+              — always — of hammer on steel. Slowly, the Workshop began to
+              understand.
+            </p>
+          </div>
+          <div class="ms-pullquote">
+            "It was meant for maintenance. But Ajmer had never been a place for
+            mere routine."
+          </div>
+          <div class="ms-stats">
+            <div>
+              <div class="ms-stat-num">1877</div>
+              <div class="ms-stat-label">Operations begin</div>
+            </div>
+            <div>
+              <div class="ms-stat-num">1875</div>
+              <div class="ms-stat-label">Rail reaches Ajmer</div>
+            </div>
+          </div>
+        </div>
+        <div class="tl-spine">
+          <div class="tl-node"><div class="tl-node-inner"></div></div>
+          <div class="tl-connector"></div>
+        </div>
+        <div class="ms-right">
+          <div class="ms-photo">
+            <div class="ms-photo-inner">
+              <img
+                src="images/old-ws-main-building.jpg"
+                alt="Ajmer — the city where the Workshop was born"
+              />
+            </div>
+            <div class="ms-photo-caption">
+              Ajmer, Rajasthan — The ancient hill city of Taragarh that became
+              home to India's most celebrated railway workshop in 1876.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MILESTONE 2 — 1895 -->
+      <div class="milestone-entry reveal">
+        <div class="ms-left">
+          <div class="ms-photo">
+            <div class="ms-photo-inner">
+              <img
+                src="images/F1-734.jpg"
+                alt="F1 Class No. 734 — the first locomotive built at Ajmer"
+              />
+            </div>
+            <div class="ms-photo-caption">
+              F1 Class No. 734 — The first locomotive built at Ajmer Workshop in
+              1895. 0–6–0 metre gauge, boiler pressure 140 PSI, tractive force
+              10,301 lbs.
+            </div>
+          </div>
+        </div>
+        <div class="tl-spine">
+          <div class="tl-node"><div class="tl-node-inner"></div></div>
+          <div class="tl-connector"></div>
+        </div>
+        <div class="ms-right">
+          <div class="ms-year-big">1895</div>
+          <div class="ms-chapter-tag">Milestone II · First Creation</div>
+          <h3 class="ms-title">The <em>F1/734</em>:<br />Iron Proof</h3>
+          <div class="ms-rule"></div>
+          <div class="ms-body">
+            <p>
+              By 1895, intent had hardened into action. From within the Workshop
+              emerged something that had not arrived from overseas, nor been
+              assembled from foreign certainty. The F1 Class, No. 734. Not
+              imported. Built here. Its specifications were precise and
+              uncompromising — a 0–6–0 metre gauge locomotive of 22.05 tons,
+              boiler pressure 140 PSI, tractive force up to 10,301 lbs.
+            </p>
+            <p>
+              The locomotive ran. And in running, it settled the matter. Ajmer
+              was no longer merely a place where locomotives were repaired. It
+              had become a place where locomotives could be conceived, shaped,
+              and brought to life.
+            </p>
+          </div>
+          <div class="ms-pullquote">
+            "There is something transformative in the first successful creation
+            of a complex machine. It alters not only capability, but belief."
+          </div>
+          <div class="ms-stats">
+            <div>
+              <div class="ms-stat-num">140</div>
+              <div class="ms-stat-label">PSI boiler<br />pressure</div>
+            </div>
+            <div>
+              <div class="ms-stat-num">22t</div>
+              <div class="ms-stat-label">Working<br />weight</div>
+            </div>
+            <div>
+              <div class="ms-stat-num">0–6–0</div>
+              <div class="ms-stat-label">Wheel<br />arrangement</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BANNER — Fraser Era -->
+      <div class="ms-banner reveal">
+        <div class="ms-banner-img">
+          <img
+            src="./loco-milestones_files/1280px-Steam_locomotive_class_M2,_162,_built_1923,_Ajmer_Workshops,_metre_gauge.jpg"
+            alt="The golden era of steam at Ajmer"
+          />
+        </div>
+        <div class="ms-banner-content">
+          <div class="ms-banner-year">1911</div>
+          <div class="ms-banner-tag">The Fraser Era · 1911–1949</div>
+          <h3 class="ms-banner-title">
+            Mastery Through<br /><em>Repetition</em>
+          </h3>
+          <p class="ms-banner-body">
+            William Stuart Fraser took charge as Locomotive Superintendent in
+            April 1911, having arrived in Ajmer as an assistant in 1902. Under
+            his leadership, production became regularised, design became
+            purposeful, and the Workshop entered its most productive and
+            technically assured phase. He understood not just what his machines
+            could do — but what his men could do.
+          </p>
+        </div>
+      </div>
+
+      <!-- MILESTONE 3 — 1919–1934 -->
+      <div class="milestone-entry reveal">
+        <div class="ms-left">
+          <div class="ms-year-big">1919</div>
+          <div class="ms-chapter-tag">Milestone III · Golden Era</div>
+          <h3 class="ms-title">
+            The <em>YB Pacific</em><br />&amp; a City's Name
+          </h3>
+          <div class="ms-rule"></div>
+          <div class="ms-body">
+            <p>
+              By the 1920s, Ajmer was producing locomotives that reflected both
+              standardisation and adaptation. The G2 Class of 1924–29 — 60
+              engines, larger boilers, cylinders of 16⅓ inches, boiler pressure
+              160 PSI — represented a mature stage of design. During both World
+              Wars, engines built at Ajmer were sent abroad to Egypt and
+              Mesopotamia.
+            </p>
+            <p>
+              Then in 1934 came the crown jewel: the YB Class Pacific — 15
+              locomotives, named after great cities. City of Ajmer. City of
+              Delhi. City of Bombay. City of Ahmedabad. These were the top-link
+              mainline engines — fast, capable, refined — the peak of passenger
+              locomotive design on metre gauge.
+            </p>
+          </div>
+          <div class="ms-stats">
+            <div>
+              <div class="ms-stat-num">60</div>
+              <div class="ms-stat-label">G2 Class<br />built</div>
+            </div>
+            <div>
+              <div class="ms-stat-num">15</div>
+              <div class="ms-stat-label">YB Pacifics<br />built</div>
+            </div>
+            <div>
+              <div class="ms-stat-num">1934</div>
+              <div class="ms-stat-label">City of Ajmer<br />enters service</div>
+            </div>
+          </div>
+        </div>
+        <div class="tl-spine">
+          <div class="tl-node"><div class="tl-node-inner"></div></div>
+          <div class="tl-connector"></div>
+        </div>
+        <div class="ms-right">
+          <div class="ms-photo">
+            <div class="ms-photo-inner">
+              <img
+                src="images/yb-pacific.jpg"
+                alt="M2 Class locomotive — Ajmer Workshops 1923"
+              />
+            </div>
+            <div class="ms-photo-caption">
+              M2 Class locomotive No. 162, built at Ajmer Workshops in 1923. The
+              golden age of steam manufacture — when Ajmer produced machines
+              worthy of their name.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MILESTONE 4 — 1949 -->
+      <div class="milestone-entry reveal">
+        <div class="ms-left">
+          <div class="ms-photo">
+            <div class="ms-photo-inner">
+              <img src="images/1949.jpg" alt="The last steam era" />
+            </div>
+            <div class="ms-photo-caption">
+              The XT1 Class of 1949 — the final locomotive built at Ajmer
+              Workshop. 467 engines over 54 years. No ceremony marked the last.
+              It simply moved out, into service, into time.
+            </div>
+          </div>
+        </div>
+        <div class="tl-spine">
+          <div class="tl-node"><div class="tl-node-inner"></div></div>
+          <div class="tl-connector"></div>
+        </div>
+        <div class="ms-right">
+          <div class="ms-year-big">1949</div>
+          <div class="ms-chapter-tag">Milestone IV · End of an Era</div>
+          <h3 class="ms-title">The <em>Last</em><br />Locomotive</h3>
+          <div class="ms-rule"></div>
+          <div class="ms-body">
+            <p>
+              In 1949, the Ajmer Workshop built its last locomotive — an XT1
+              Class 0–4–2T tank engine. No proclamation marked the moment. No
+              gathering of men stood to witness it. The machine simply moved
+              out, as countless others had done — into service, into distance,
+              into time. And with that, an era closed.
+            </p>
+            <p>
+              India had changed. Independence had brought new direction.
+              Industrial planning turned toward larger facilities — the
+              establishment of Chittaranjan Locomotive Works signalled a shift.
+              Ajmer was not diminished. It was reassigned. The Workshop turned,
+              as it had turned before, to what was required.
+            </p>
+          </div>
+          <div class="ms-pullquote">
+            "The Workshop simply ceased to build. Yet what it had achieved
+            remained — 467 locomotives. Over five decades of production."
+          </div>
+          <div class="ms-stats">
+            <div>
+              <div class="ms-stat-num">467</div>
+              <div class="ms-stat-label">Total locos<br />built</div>
+            </div>
+            <div>
+              <div class="ms-stat-num">54</div>
+              <div class="ms-stat-label">Years of<br />manufacture</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MILESTONE 5 — 1950–2000 -->
+      <div class="milestone-entry reveal">
+        <div class="ms-left">
+          <div class="ms-year-big">1950s</div>
+          <div class="ms-chapter-tag">Milestone V · Reinvention</div>
+          <h3 class="ms-title">The Age of<br /><em>Preservation</em></h3>
+          <div class="ms-rule"></div>
+          <div class="ms-body">
+            <p>
+              The Workshop adapted — as it had always adapted. The knowledge
+              that had once shaped boilers and frames found new purpose in
+              overhaul and maintenance. Steam gave way to diesel. Carriages and
+              wagons became central to its work. Structures reinforced.
+              Components replaced. Designs improved — not in sweeping gestures,
+              but in careful increments.
+            </p>
+            <p>
+              There are accounts of fitters who could recognise a locomotive not
+              by its number, but by the sound of its motion. Such knowledge does
+              not appear in manuals. It resides in memory. And within the
+              Workshop, that memory was passed — generation to generation —
+              without ever being written down.
+            </p>
+          </div>
+          <div class="ms-pullquote">
+            "To build a machine is an act of creation. To keep it working — year
+            after year — is an act of understanding."
+          </div>
+          <div class="ms-stats">
+            <div>
+              <div class="ms-stat-num">3</div>
+              <div class="ms-stat-label">Modernisation<br />phases</div>
+            </div>
+            <div>
+              <div class="ms-stat-num">1600+</div>
+              <div class="ms-stat-label">Wagons overhauled<br />per year</div>
+            </div>
+          </div>
+        </div>
+        <div class="tl-spine">
+          <div class="tl-node"><div class="tl-node-inner"></div></div>
+          <div class="tl-connector"></div>
+        </div>
+        <div class="ms-right">
+          <div class="ms-photo">
+            <div
+              class="ms-photo-inner"
+              style="
+                aspect-ratio: 16/9;
+                background: linear-gradient(135deg, #1a1008, #100608);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <svg
+                viewBox="0 0 480 270"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                style="width: 85%; opacity: 0.5"
+              >
+                <rect
+                  x="20"
+                  y="80"
+                  width="440"
+                  height="120"
+                  stroke="#C9973A"
+                  stroke-width="1"
+                ></rect>
+                <g stroke="#C9973A" stroke-width="0.7" opacity="0.6">
+                  <line x1="60" y1="84" x2="60" y2="196"></line>
+                  <line x1="90" y1="84" x2="90" y2="196"></line>
+                  <line x1="120" y1="84" x2="120" y2="196"></line>
+                  <line x1="150" y1="84" x2="150" y2="196"></line>
+                  <line x1="180" y1="84" x2="180" y2="196"></line>
+                  <line x1="210" y1="84" x2="210" y2="196"></line>
+                  <line x1="240" y1="84" x2="240" y2="196"></line>
+                  <line x1="270" y1="84" x2="270" y2="196"></line>
+                  <line x1="300" y1="84" x2="300" y2="196"></line>
+                  <line x1="330" y1="84" x2="330" y2="196"></line>
+                  <line x1="360" y1="84" x2="360" y2="196"></line>
+                  <line x1="390" y1="84" x2="390" y2="196"></line>
+                  <line x1="420" y1="84" x2="420" y2="196"></line>
+                </g>
+                <circle
+                  cx="80"
+                  cy="220"
+                  r="28"
+                  stroke="#C9973A"
+                  stroke-width="1.2"
+                ></circle>
+                <circle
+                  cx="80"
+                  cy="220"
+                  r="18"
+                  stroke="#C9973A"
+                  stroke-width="0.6"
+                ></circle>
+                <circle
+                  cx="200"
+                  cy="220"
+                  r="28"
+                  stroke="#C9973A"
+                  stroke-width="1.2"
+                ></circle>
+                <circle
+                  cx="200"
+                  cy="220"
+                  r="18"
+                  stroke="#C9973A"
+                  stroke-width="0.6"
+                ></circle>
+                <circle
+                  cx="320"
+                  cy="220"
+                  r="28"
+                  stroke="#C9973A"
+                  stroke-width="1.2"
+                ></circle>
+                <circle
+                  cx="320"
+                  cy="220"
+                  r="18"
+                  stroke="#C9973A"
+                  stroke-width="0.6"
+                ></circle>
+                <circle
+                  cx="400"
+                  cy="220"
+                  r="20"
+                  stroke="#C9973A"
+                  stroke-width="1"
+                ></circle>
+                <line
+                  x1="20"
+                  y1="200"
+                  x2="460"
+                  y2="200"
+                  stroke="#C9973A"
+                  stroke-width="1.2"
+                  opacity="0.4"
+                ></line>
+                <rect
+                  x="20"
+                  y="30"
+                  width="100"
+                  height="54"
+                  stroke="#C9973A"
+                  stroke-width="0.8"
+                ></rect>
+                <rect
+                  x="36"
+                  y="40"
+                  width="28"
+                  height="20"
+                  stroke="#C9973A"
+                  stroke-width="0.6"
+                ></rect>
+                <rect
+                  x="72"
+                  y="40"
+                  width="28"
+                  height="20"
+                  stroke="#C9973A"
+                  stroke-width="0.6"
+                ></rect>
+                <rect
+                  x="300"
+                  y="60"
+                  width="26"
+                  height="24"
+                  stroke="#C9973A"
+                  stroke-width="0.8"
+                ></rect>
+                <rect
+                  x="294"
+                  y="54"
+                  width="38"
+                  height="8"
+                  stroke="#C9973A"
+                  stroke-width="0.6"
+                ></rect>
+                <path
+                  d="M309 50 Q313 34 309 20"
+                  stroke="#C9973A"
+                  stroke-width="0.6"
+                  stroke-dasharray="3,4"
+                  opacity="0.5"
+                ></path>
+                <line
+                  x1="80"
+                  y1="192"
+                  x2="400"
+                  y2="192"
+                  stroke="#C9973A"
+                  stroke-width="2"
+                  opacity="0.3"
+                ></line>
+              </svg>
+            </div>
+            <div class="ms-photo-caption">
+              Through the transition from steam to diesel — the Workshop's
+              erecting bays adapted from manufacture to the equally demanding
+              art of overhaul and preservation.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MILESTONE 6 — 2026 -->
+      <div class="milestone-entry reveal">
+        <div class="ms-left">
+          <div class="ms-photo">
+            <div class="ms-photo-inner">
+              <img
+                src="images/vande-bharat.png"
+                alt="Vande Bharat Express — the future of Indian Railways"
+              />
+            </div>
+            <div class="ms-photo-caption">
+              Vande Bharat Express — India's semi-high speed trainset. Ajmer
+              Workshop now oversees POH of all 5 rakes on North Western Railway,
+              alongside the iconic Palace on Wheels.
+            </div>
+          </div>
+        </div>
+        <div class="tl-spine">
+          <div
+            class="tl-node"
+            style="
+              border-color: var(--gold);
+              background: rgba(201, 151, 58, 0.1);
+            "
+          >
+            <div
+              class="tl-node-inner"
+              style="background: var(--gold); width: 14px; height: 14px"
+            ></div>
+          </div>
+          <div class="tl-connector last"></div>
+        </div>
+        <div class="ms-right">
+          <div class="ms-year-big" style="color: var(--gold)">2026</div>
+          <div class="ms-chapter-tag">Milestone VI · Sesquicentennial</div>
+          <h3 class="ms-title">
+            150 Years —<br /><em>Vande Bharat</em><br />&amp; Beyond
+          </h3>
+          <div class="ms-rule"></div>
+          <div class="ms-body">
+            <p>
+              In 2026, the Workshop marks 150 years of unbroken service. Today
+              it produces over 300 conventional ICF coaches and 760 LHB coaches
+              annually. It overhauls Vande Bharat trainsets — India's most
+              advanced passenger service — and maintains the Palace on Wheels,
+              the jewel of India's heritage tourism rail network.
+            </p>
+            <p>
+              There is a certain historical symmetry in this: the Workshop which
+              once mastered metre gauge steam now undertakes the overhaul of
+              aerodynamic, electronically driven, high-speed trainsets. The
+              materials have changed. The discipline has not. The spirit has
+              not. Ajmer's Workshop has passed through two major phases of
+              modernisation, and now advances through a third — Vande Bharat's
+              Periodic Overhaul facility, the most ambitious undertaking since
+              the building era of 1895.
+            </p>
+          </div>
+          <div class="ms-pullquote">
+            "To learn the language of each new age without forgetting the labour
+            of the old one."
+          </div>
+          <div class="ms-stats">
+            <div>
+              <div class="ms-stat-num">760</div>
+              <div class="ms-stat-label">LHB coaches<br />per year</div>
+            </div>
+            <div>
+              <div class="ms-stat-num">5</div>
+              <div class="ms-stat-label">Vande Bharat<br />rakes POH</div>
+            </div>
+            <div>
+              <div class="ms-stat-num">150</div>
+              <div class="ms-stat-label">Years of<br />excellence</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline close -->
+      <div class="tl-close">
+        <div class="tl-close-line"></div>
+        <div class="tl-close-node"><div class="tl-close-icon">⚙</div></div>
+      </div>
+    </div>
+
+    <!-- CLOSING -->
+    <div class="closing reveal">
+      <div class="closing-tag">1876 — 2026 — Beyond</div>
+      <h2 class="closing-title">The Iron Road<br />Still <em>Runs</em></h2>
+      <p class="closing-body">
+        From the modest maintenance shed of 1877 to one of India's most
+        celebrated railway institutions — The Loco Workshop, Ajmer has never
+        merely survived. It has endured with purpose. And as the
+        sesquicentennial year of 2026 arrives, the Workshop faces the next 150
+        years with the same quiet conviction that has always defined it: that no
+        machine entrusted to Ajmer shall leave its gates unworthy of the road
+        ahead.
+      </p>
+      <div class="closing-ctas">
+        <a
+          href="http://127.0.0.1:8000/loco_workshop_booking.html"
+          class="btn-gold"
+          >Book a Visit →</a
+        >
+        <a
+          href="http://127.0.0.1:8000/loco_workshop_legacy.html"
+          class="btn-outline"
+          >Read the Legacy</a
+        >
+      </div>
+    </div>
+
+    <!-- FOOTER STRIP -->
+    <div class="foot-strip">
+      <div class="foot-brand">
+        The Loco Workshop, Ajmer · Est. 1876 · Sesquicentennial 2026
+      </div>
+      <ul class="foot-links">
+        <li>
+          <a href="http://127.0.0.1:8000/loco_workshop_ajmer.html">Home</a>
+        </li>
+        <li>
+          <a href="http://127.0.0.1:8000/loco_workshop_legacy.html">Legacy</a>
+        </li>
+        <li>
+          <a href="http://127.0.0.1:8000/loco_workshop_booking.html"
+            >Book a Visit</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <script>
+      const cursor = document.getElementById("cursor");
+      const ring = document.getElementById("cursorRing");
+      let mx = 0,
+        my = 0,
+        rx = 0,
+        ry = 0;
+      document.addEventListener("mousemove", (e) => {
+        mx = e.clientX;
+        my = e.clientY;
+        cursor.style.transform = `translate(${mx - 4}px,${my - 4}px)`;
+      });
+      (function animRing() {
+        rx += (mx - rx) * 0.11;
+        ry += (my - ry) * 0.11;
+        ring.style.transform = `translate(${rx - 18}px,${ry - 18}px)`;
+        requestAnimationFrame(animRing);
+      })();
+      const obs = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) e.target.classList.add("visible");
+          });
+        },
+        { threshold: 0.07, rootMargin: "0px 0px -30px 0px" },
+      );
+      document.querySelectorAll(".reveal").forEach((el) => obs.observe(el));
+    </script>
+
+    <footer>
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand">The Loco Workshop, Ajmer</div>
+          <div class="footer-brand-sub2">Est. 1876 · Sesquicentennial 2026</div>
+          <p class="footer-desc">
+            One of Asia's oldest and most celebrated railway workshops — serving
+            the Indian Railways for 150 years with skill, dedication and
+            engineering pride. Situated in the heart of Rajasthan, Ajmer.
+          </p>
+          <div class="footer-socials">
+            <a href="http://127.0.0.1:8000/milestones#" class="f-social">𝕏</a>
+            <a href="http://127.0.0.1:8000/milestones#" class="f-social">in</a>
+            <a href="http://127.0.0.1:8000/milestones#" class="f-social">▶</a>
+            <a href="http://127.0.0.1:8000/milestones#" class="f-social">📷</a>
+          </div>
+        </div>
+        <div>
+          <div class="f-col-title">Visit</div>
+          <ul class="f-links">
+            <li>
+              <a href="http://127.0.0.1:8000/milestones#">Heritage Museum</a>
+            </li>
+            <li>
+              <a href="http://127.0.0.1:8000/milestones#"
+                >Workshop Floor Tour</a
+              >
+            </li>
+            <li>
+              <a href="http://127.0.0.1:8000/milestones#">Group Bookings</a>
+            </li>
+            <li>
+              <a href="http://127.0.0.1:8000/milestones#">Getting Here</a>
+            </li>
+            <li>
+              <a href="http://127.0.0.1:8000/milestones#">Visitor Guidelines</a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <div class="f-col-title">About</div>
+          <ul class="f-links">
+            <li>
+              <a href="http://127.0.0.1:8000/milestones#">150-Year History</a>
+            </li>
+            <li>
+              <a href="http://127.0.0.1:8000/milestones#">Our Capabilities</a>
+            </li>
+            <li>
+              <a href="http://127.0.0.1:8000/milestones#"
+                >Workforce &amp; Apprentice</a
+              >
+            </li>
+            <li>
+              <a href="http://127.0.0.1:8000/milestones#"
+                >Awards &amp; Recognition</a
+              >
+            </li>
+            <li>
+              <a href="http://127.0.0.1:8000/milestones#">Annual Report</a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <div class="f-col-title">Connect</div>
+          <ul class="f-links">
+            <li>
+              <a href="http://127.0.0.1:8000/milestones#">Press &amp; Media</a>
+            </li>
+            <li>
+              <a href="http://127.0.0.1:8000/milestones#">Indian Railways ↗</a>
+            </li>
+            <li>
+              <a href="http://127.0.0.1:8000/milestones#">RTI Information</a>
+            </li>
+            <li>
+              <a href="http://127.0.0.1:8000/milestones#"
+                >Contact the Workshop</a
+              >
+            </li>
+            <li>
+              <a href="http://127.0.0.1:8000/milestones#"
+                >Tenders &amp; Procurement</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">
+          © 2026 The Loco Workshop, Ajmer. Under Indian Railways, Ministry of
+          Railways, Government of India.
+        </div>
+        <div class="footer-rail">
+          <span>⚙</span>
+          <span>Ajmer · Rajasthan · India · Est. 1876</span>
+        </div>
+      </div>
+    </footer>
+    <script src="./loco-milestones_files/index.js"></script>
+  </body>
+</html>

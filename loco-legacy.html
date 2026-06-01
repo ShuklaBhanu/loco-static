@@ -1,0 +1,775 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Loco Workshop, Ajmer — 150 Years of Industrial Majesty</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Cinzel:wght@400;500;600&family=Jost:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/index.css" />
+    <link rel="stylesheet" href="css/booking.css" />
+
+    <script id="browser-logger-active">
+      (function () {
+        const ENDPOINT = "http://127.0.0.1:8000/_boost/browser-logs";
+        const logQueue = [];
+        let flushTimeout = null;
+
+        console.log(
+          "🔍 Browser logger active (MCP server detected). Posting to: " +
+            ENDPOINT,
+        );
+
+        // Store original console methods
+        const originalConsole = {
+          log: console.log,
+          info: console.info,
+          error: console.error,
+          warn: console.warn,
+          table: console.table,
+        };
+
+        // Helper to safely stringify values
+        function safeStringify(obj) {
+          const seen = new WeakSet();
+          return JSON.stringify(obj, (key, value) => {
+            if (typeof value === "object" && value !== null) {
+              if (seen.has(value)) return "[Circular]";
+              seen.add(value);
+            }
+            if (value instanceof Error) {
+              return {
+                name: value.name,
+                message: value.message,
+                stack: value.stack,
+              };
+            }
+            return value;
+          });
+        }
+
+        // Batch and send logs
+        function flushLogs() {
+          if (logQueue.length === 0) return;
+
+          const batch = logQueue.splice(0, logQueue.length);
+
+          fetch(ENDPOINT, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Requested-With": "XMLHttpRequest",
+            },
+            body: JSON.stringify({ logs: batch }),
+          }).catch((err) => {
+            // Silently fail to avoid infinite loops
+            originalConsole.error("Failed to send logs:", err);
+          });
+        }
+
+        // Debounced flush (100ms)
+        function scheduleFlush() {
+          if (flushTimeout) clearTimeout(flushTimeout);
+          flushTimeout = setTimeout(flushLogs, 100);
+        }
+
+        // Intercept console methods
+        ["log", "info", "error", "warn", "table"].forEach((method) => {
+          console[method] = function (...args) {
+            // Call original method
+            originalConsole[method].apply(console, args);
+
+            // Capture log data
+            try {
+              logQueue.push({
+                type: method,
+                timestamp: new Date().toISOString(),
+                data: args.map((arg) => {
+                  try {
+                    return typeof arg === "object"
+                      ? JSON.parse(safeStringify(arg))
+                      : arg;
+                  } catch (e) {
+                    return String(arg);
+                  }
+                }),
+                url: window.location.href,
+                userAgent: navigator.userAgent,
+              });
+
+              scheduleFlush();
+            } catch (e) {
+              // Fail silently
+            }
+          };
+        });
+
+        // Global error handlers for uncaught errors
+        const originalOnError = window.onerror;
+        window.onerror = function boostErrorHandler(
+          errorMsg,
+          url,
+          lineNumber,
+          colNumber,
+          error,
+        ) {
+          try {
+            logQueue.push({
+              type: "uncaught_error",
+              timestamp: new Date().toISOString(),
+              data: [
+                {
+                  message: errorMsg,
+                  filename: url,
+                  lineno: lineNumber,
+                  colno: colNumber,
+                  error: error
+                    ? {
+                        name: error.name,
+                        message: error.message,
+                        stack: error.stack,
+                      }
+                    : null,
+                },
+              ],
+              url: window.location.href,
+              userAgent: navigator.userAgent,
+            });
+
+            scheduleFlush();
+          } catch (e) {
+            // Fail silently
+          }
+
+          // Call original handler if it exists
+          if (originalOnError && typeof originalOnError === "function") {
+            return originalOnError(errorMsg, url, lineNumber, colNumber, error);
+          }
+
+          // Let the error continue to propagate
+          return false;
+        };
+        window.addEventListener("error", (event) => {
+          try {
+            logQueue.push({
+              type: "window_error",
+              timestamp: new Date().toISOString(),
+              data: [
+                {
+                  message: event.message,
+                  filename: event.filename,
+                  lineno: event.lineno,
+                  colno: event.colno,
+                  error: event.error
+                    ? {
+                        name: event.error.name,
+                        message: event.error.message,
+                        stack: event.error.stack,
+                      }
+                    : null,
+                },
+              ],
+              url: window.location.href,
+              userAgent: navigator.userAgent,
+            });
+
+            scheduleFlush();
+          } catch (e) {
+            // Fail silently
+          }
+
+          // Let the error continue to propagate
+          return false;
+        });
+        window.addEventListener("unhandledrejection", (event) => {
+          try {
+            logQueue.push({
+              type: "error",
+              timestamp: new Date().toISOString(),
+              data: [
+                {
+                  message: "Unhandled Promise Rejection",
+                  reason:
+                    event.reason instanceof Error
+                      ? {
+                          name: event.reason.name,
+                          message: event.reason.message,
+                          stack: event.reason.stack,
+                        }
+                      : event.reason,
+                },
+              ],
+              url: window.location.href,
+              userAgent: navigator.userAgent,
+            });
+
+            scheduleFlush();
+          } catch (e) {
+            // Fail silently
+          }
+
+          // Let the rejection continue to propagate
+          return false;
+        });
+
+        // Flush on page unload
+        window.addEventListener("beforeunload", () => {
+          if (logQueue.length > 0) {
+            navigator.sendBeacon(ENDPOINT, JSON.stringify({ logs: logQueue }));
+          }
+        });
+      })();
+    </script>
+  </head>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAV -->
+  <nav id="mainNav">
+    <a href="loco-index.html" class="nav-logo">
+      <div class="nav-logo-wheel">⚙</div>
+      <span>The Loco Workshop, Ajmer</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="loco-legacy.html">Legacy</a></li>
+      <li><a href="#capabilities">Capabilities</a></li>
+      <li><a href="loco-milestones.html">Milestones</a></li>
+      <li><a href="loco-booking.html">Visit</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+    </ul>
+    <a href="loco-booking.html" class="nav-cta">Plan a Visit</a>
+  </nav>
+
+  <body>
+    <!-- NAV -->
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-img"></div>
+      <div class="hero-side-label">Est. 1877 · Ajmer · Rajasthan · India</div>
+      <div class="hero-scroll-line"></div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">A Story 150 Years in the Making</div>
+        <h1 class="hero-title">The <em>Legacy</em><br />of Ajmer</h1>
+        <p class="hero-desc">
+          From the ancient fort of Taragarh to the iron road that changed a
+          nation — the story of a city that became the heartbeat of India's
+          railways.
+        </p>
+      </div>
+    </section>
+
+    <!-- INTRO -->
+    <div class="intro">
+      <div class="intro-quote reveal">
+        "Ajmer does not announce itself loudly. It never did. But if one stands
+        there and listens — one may still hear the echo of steam, the measured
+        strike of hammer on iron."
+      </div>
+      <div class="intro-body reveal rd1">
+        <p>
+          Before the rails came, before the workshops rose, before any
+          locomotive turned its wheels in the dust of Rajputana — there was a
+          city. A city of deliberate position. Of ancient purpose.
+        </p>
+        <p>
+          The story of The Loco Workshop is inseparable from the story of Ajmer
+          itself: a place chosen not by accident, but by the invisible logic of
+          geography, history, and strategic necessity. This is that story — told
+          across five chapters of iron, steam, and human will.
+        </p>
+      </div>
+    </div>
+
+    <div class="chapter-divider">
+      <div class="chapter-line"></div>
+      <div class="chapter-label">Chapter I — The Land Before the Line</div>
+      <div class="chapter-line"></div>
+    </div>
+
+    <!-- CHAPTER I: THE HILL & THE FORT -->
+    <div class="chapter">
+      <div class="chapter-item reveal">
+        <div class="chapter-photo">
+          <div class="photo-frame-border"></div>
+          <div class="photo-frame">
+            <img src="images/taragarh.png" />
+          </div>
+          <div class="photo-year-tag">c. 7th Century AD</div>
+          <div class="photo-caption">
+            Taragarh Fort, Ajmer — the ancient sentinel that watched over
+            Rajputana's crossroads for a thousand years.
+          </div>
+        </div>
+        <div class="chapter-text">
+          <span class="chapter-num">I</span>
+          <div class="chapter-tag">The Hill, The Fort & The Iron Road</div>
+          <h2 class="chapter-title">
+            A City<br />Chosen by<br /><em>Geography</em>
+          </h2>
+          <div class="chapter-rule"></div>
+          <div class="chapter-body">
+            <p>
+              Ajmer sat — quiet, deliberate — at the heart of undivided India,
+              as though it had chosen its place long before men thought to
+              measure the earth. Hills rose around it, not in arrogance, but in
+              patient watchfulness. Among them stood Taragarh, the old sentinel,
+              built when kings still trusted stone more than treaties.
+            </p>
+            <p>
+              Empires came to understand this. The Mughals held it close. Akbar
+              made it a province. Jahangir received Sir Thomas Roe here in 1616
+              — a meeting that was a hinge upon which future histories would
+              turn. The Marathas took it, and in 1818, it passed into British
+              hands.
+            </p>
+            <p>
+              But Ajmer was never conquered fully. It was <em>used</em>. The
+              British, practical men of ledgers and lines, saw what others had
+              only felt: that Ajmer lay between powers — Jodhpur to the west,
+              Udaipur to the south, Jaipur to the east — and like a keystone,
+              held the arch of Rajputana together.
+            </p>
+          </div>
+          <div class="chapter-pullquote">
+            "There is a moment, in the history of any land, when silence gives
+            way to rhythm. For Ajmer, that moment came on 1st August 1875, when
+            the iron road reached its edges."
+          </div>
+          <div class="chapter-facts">
+            <div class="fact-item">
+              <div class="fact-num">1616</div>
+              <div class="fact-label">Jahangir meets<br />Sir Thomas Roe</div>
+            </div>
+            <div class="fact-item">
+              <div class="fact-num">1818</div>
+              <div class="fact-label">Passes into<br />British hands</div>
+            </div>
+            <div class="fact-item">
+              <div class="fact-num">1875</div>
+              <div class="fact-label">Iron road<br />arrives</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter-divider">
+      <div class="chapter-line"></div>
+      <div class="chapter-label">Chapter II — The Men Who Dreamed in Steel</div>
+      <div class="chapter-line"></div>
+    </div>
+
+    <!-- CHAPTER II: MEN WHO DREAMED -->
+    <div class="chapter">
+      <div class="chapter-item reverse reveal">
+        <div class="chapter-photo">
+          <div class="photo-frame-border"></div>
+          <div class="photo-frame">
+            <img
+              src="images/F1-734.jpg"
+              alt="Steam Locomotive F734, the first locomotive built at Ajmer Workshop"
+            />
+          </div>
+          <div class="photo-year-tag">F1 Class · No. 734 · 1895</div>
+          <div class="photo-caption">
+            The F1 Class locomotive No. 734 — the first engine built at Ajmer
+            Workshop. Not imported. Not assembled from foreign certainty. Built
+            here.
+          </div>
+        </div>
+        <div class="chapter-text">
+          <span class="chapter-num">II</span>
+          <div class="chapter-tag">Men Who Dreamed in Steel</div>
+          <h2 class="chapter-title">
+            The Birth<br />of a<br /><em>Vision</em>
+          </h2>
+          <div class="chapter-rule"></div>
+          <div class="chapter-body">
+            <p>
+              In the early 19th century, India was not yet a land of rails. It
+              was, to the merchants of Victorian Britain, a place of promise —
+              but also of inconvenience. Among those who saw further than the
+              present was Rowland Macdonald Stephenson, who in 1844 proposed not
+              merely a railway — but a system: six great routes that would bind
+              the subcontinent in iron.
+            </p>
+            <p>
+              The Anderson Committee of 1864 outlined what would become the
+              skeleton of modern India's railway network: a direct line from
+              Bombay to the North-Western Provinces, connections to Delhi and
+              Agra, a central line through Jaipur to Ajmer, and onward to
+              Neemuch and Indore.
+            </p>
+            <p>
+              What they had outlined in careful prose would, within twenty
+              years, stand complete — and at its operational heart would be The
+              Workshop at Ajmer, transforming from a maintenance depot into the
+              manufacturing soul of the metre gauge system.
+            </p>
+          </div>
+          <div class="chapter-pullquote">
+            "Railways are not built by vision alone. They are built by
+            correction." — W.C. Furnivall, Survey Engineer
+          </div>
+          <div class="chapter-facts">
+            <div class="fact-item">
+              <div class="fact-num">1844</div>
+              <div class="fact-label">Stephenson's<br />vision proposed</div>
+            </div>
+            <div class="fact-item">
+              <div class="fact-num">1864</div>
+              <div class="fact-label">Anderson<br />Committee report</div>
+            </div>
+            <div class="fact-item">
+              <div class="fact-num">1877</div>
+              <div class="fact-label">Workshop<br />established</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHOTO BREAK — Steam Age -->
+    <div class="photo-break">
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Steam_Locomotive_F734%2C_Rajput_Malwa_Railway.jpg/1280px-Steam_Locomotive_F734%2C_Rajput_Malwa_Railway.jpg"
+        alt="The age of steam"
+      />
+      <div class="photo-break-text">
+        <div class="pbt-tag">1877 — The Workshop Awakens</div>
+        <p class="pbt-quote">
+          "Maintenance is one thing. Manufacture is another." — The doubters
+          were answered not in argument, but in iron.
+        </p>
+      </div>
+    </div>
+
+    <div class="chapter-divider">
+      <div class="chapter-line"></div>
+      <div class="chapter-label">
+        Chapter III — The Narrow Line That Changed India
+      </div>
+      <div class="chapter-line"></div>
+    </div>
+
+    <!-- CHAPTER III: METRE GAUGE -->
+    <div class="chapter">
+      <div class="chapter-item reveal">
+        <div class="chapter-photo">
+          <div class="photo-frame-border"></div>
+          <div class="photo-frame">
+            <img
+              src="images/narrow-gauge.jpg"
+              alt="Metre gauge railway India"
+            />
+          </div>
+          <div class="photo-year-tag">Metre Gauge Decision · 1870</div>
+          <div class="photo-caption">
+            Lord Mayo's dispatch of 1869 — "an extravagantly constructed railway
+            is permanently a financial failure" — set the course for metre gauge
+            across Rajputana.
+          </div>
+        </div>
+        <div class="chapter-text">
+          <span class="chapter-num">III</span>
+          <div class="chapter-tag">The Narrow Line That Changed India</div>
+          <h2 class="chapter-title">
+            A Decision<br />Measured<br />in <em>Inches</em>
+          </h2>
+          <div class="chapter-rule"></div>
+          <div class="chapter-body">
+            <p>
+              There are decisions in engineering that appear, at first glance,
+              to be matters of inches. In truth, they are matters of destiny. By
+              1869, railways had proven too expensive. Lord Mayo, in a dispatch
+              that bordered on warning, wrote with clarity: "An extravagantly
+              constructed railway is permanently a financial failure… To a poor
+              country like India this lesson is of exceptional importance."
+            </p>
+            <p>
+              A committee of four engineers — Strachey, Dickens, Fowler, and
+              Rendel — was appointed. Their recommendation: a gauge of
+              approximately 3 feet 3 inches, adjusted to align with the proposed
+              metric system. Thus 3 feet 3⅜ inches became one metre. And
+              Rajputana became the first region in India to adopt metre gauge on
+              a large scale.
+            </p>
+            <p>
+              For the Workshop that would rise in Ajmer in 1877, this decision
+              was decisive. Every locomotive built there — every axle, every
+              cylinder, every measured inch of its frame — would carry the
+              character of this constraint. And from constraint came refinement.
+            </p>
+          </div>
+          <div class="chapter-pullquote">
+            "If the broad gauge was the declaration of power, then metre gauge
+            was the exercise of judgement."
+          </div>
+          <div class="chapter-facts">
+            <div class="fact-item">
+              <div class="fact-num">1869</div>
+              <div class="fact-label">Lord Mayo's<br />decisive dispatch</div>
+            </div>
+            <div class="fact-item">
+              <div class="fact-num">1870</div>
+              <div class="fact-label">Metre gauge<br />adopted</div>
+            </div>
+            <div class="fact-item">
+              <div class="fact-num">1873</div>
+              <div class="fact-label">First metre gauge<br />section opens</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter-divider">
+      <div class="chapter-line"></div>
+      <div class="chapter-label">Chapter IV — Fire, Steam & Mastery</div>
+      <div class="chapter-line"></div>
+    </div>
+
+    <!-- CHAPTER IV: MASTERY -->
+    <div class="chapter">
+      <div class="chapter-item reverse reveal">
+        <div class="chapter-photo">
+          <div class="photo-frame-border"></div>
+          <div class="photo-frame">
+            <img
+              src="images/M2-class-loco.jpg"
+              alt="M2 class locomotive built at Ajmer Workshops 1923"
+            />
+          </div>
+          <div class="photo-year-tag">M2 Class · Built Ajmer · 1923</div>
+          <div class="photo-caption">
+            M2 Class locomotive No. 162, built at Ajmer Workshops in 1923 —
+            among the finest products of the Workshop's golden era under W.S.
+            Fraser.
+          </div>
+        </div>
+        <div class="chapter-text">
+          <span class="chapter-num">IV</span>
+          <div class="chapter-tag">Fire, Steam & Mastery · 1900–1949</div>
+          <h2 class="chapter-title">
+            The<br /><em>Golden</em><br />Era of Build
+          </h2>
+          <div class="chapter-rule"></div>
+          <div class="chapter-body">
+            <p>
+              By the turn of the twentieth century, Ajmer Workshop had passed
+              beyond its apprenticeship. It no longer asked whether it could
+              build — it concerned itself with how well. Under the leadership of
+              William Stuart Fraser, who became Locomotive Superintendent in
+              April 1911, a comprehensive replacement programme began. Design
+              became purposeful. Production became regularised.
+            </p>
+            <p>
+              The Workshop produced locomotives of remarkable variety: the F
+              Class workhorse, the M Class for mail services, the P Class with
+              superheaters, the powerful G2 Class for mixed traffic, and the YB
+              Pacific — City of Ajmer, City of Delhi, City of Bombay — the crown
+              jewels of metre gauge passenger service.
+            </p>
+            <p>
+              During both World Wars, Ajmer's engines went abroad — to
+              Mesopotamia and Egypt — practical contributions from Rajputana to
+              distant campaigns. By 1949, when the last locomotive left the
+              erecting shop, the Workshop had built 467 engines over five
+              decades. Each one a proof.
+            </p>
+          </div>
+          <div class="chapter-facts">
+            <div class="fact-item">
+              <div class="fact-num">467</div>
+              <div class="fact-label">Locomotives<br />built total</div>
+            </div>
+            <div class="fact-item">
+              <div class="fact-num">1911</div>
+              <div class="fact-label">Fraser takes<br />charge</div>
+            </div>
+            <div class="fact-item">
+              <div class="fact-num">1934</div>
+              <div class="fact-label">YB Pacific<br />introduced</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter-divider">
+      <div class="chapter-line"></div>
+      <div class="chapter-label">Chapter V — Memory of Iron and Men</div>
+      <div class="chapter-line"></div>
+    </div>
+
+    <!-- CHAPTER V: MEMORY -->
+    <div class="chapter">
+      <div class="chapter-item reveal">
+        <div class="chapter-photo">
+          <div class="photo-frame-border"></div>
+          <div class="photo-frame">
+            <img
+              src="images/vande-bharat.png"
+              alt="Vande Bharat Express — modern India"
+            />
+          </div>
+          <div class="photo-year-tag">Vande Bharat · 2024</div>
+          <div class="photo-caption">
+            Ajmer Workshop now oversees the Periodic Overhaul of all five Vande
+            Bharat rakes on North Western Railway — from steam to the cutting
+            edge of Indian rail.
+          </div>
+        </div>
+        <div class="chapter-text">
+          <span class="chapter-num">V</span>
+          <div class="chapter-tag">Memory of Iron & Men · 1949–2026</div>
+          <h2 class="chapter-title">
+            From<br />Steam to<br /><em>Vande Bharat</em>
+          </h2>
+          <div class="chapter-rule"></div>
+          <div class="chapter-body">
+            <p>
+              In 1949, the Workshop built its last locomotive — an XT1 Class
+              tank engine. No ceremony marked the moment. The machine simply
+              moved out, as countless others had done — into service, into
+              distance, into time. And with that, the era of building closed.
+              But the era of sustaining had already begun.
+            </p>
+            <p>
+              Ajmer adapted — as it had always adapted. The knowledge that had
+              once shaped boilers and frames found new purpose in overhaul and
+              maintenance. Steam gave way to diesel. Diesel gave way to the age
+              of the Vande Bharat. Today, the Workshop carries out the overhaul
+              of all five Vande Bharat rakes on North Western Railway, produces
+              over 300 conventional ICF coaches and 760 LHB coaches annually,
+              and maintains the prestigious Palace on Wheels.
+            </p>
+            <p>
+              There is a certain historical symmetry in this. The Workshop which
+              once mastered metre gauge steam now undertakes the overhaul of
+              India's most modern trainsets. The materials have changed. The
+              discipline has not.
+            </p>
+          </div>
+          <div class="chapter-pullquote">
+            "That no machine entrusted to Ajmer shall leave its gates unworthy
+            of the road ahead."
+          </div>
+          <div class="chapter-facts">
+            <div class="fact-item">
+              <div class="fact-num">1949</div>
+              <div class="fact-label">Last locomotive<br />built</div>
+            </div>
+            <div class="fact-item">
+              <div class="fact-num">300+</div>
+              <div class="fact-label">ICF coaches<br />per year</div>
+            </div>
+            <div class="fact-item">
+              <div class="fact-num">760</div>
+              <div class="fact-label">LHB coaches<br />per year</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLOSING -->
+    <div class="closing reveal">
+      <div class="closing-tag">150 Years · 1876–2026</div>
+      <h2 class="closing-title">The Story<br />Continues <em>Forward</em></h2>
+      <p class="closing-body">
+        The Workshop has always possessed a singular talent: to learn the
+        language of each new age without forgetting the labour of the old one.
+        From the F1/734 to the Vande Bharat — the spirit endures. This is not
+        merely a workshop. It is a living institution.
+      </p>
+      <div class="closing-ctas">
+        <a href="loco_workshop_milestones.html" class="btn-gold"
+          >View Milestones →</a
+        >
+        <a href="loco_workshop_booking.html" class="btn-outline"
+          >Book a Visit</a
+        >
+      </div>
+    </div>
+
+    <!-- FOOTER STRIP -->
+    <div class="foot-strip">
+      <div class="foot-brand">
+        The Loco Workshop, Ajmer · Est. 1876 · Sesquicentennial 2026
+      </div>
+      <ul class="foot-links">
+        <li><a href="loco_workshop_ajmer.html">Home</a></li>
+        <li><a href="loco_workshop_milestones.html">Milestones</a></li>
+        <li><a href="loco_workshop_booking.html">Book a Visit</a></li>
+      </ul>
+    </div>
+
+    <footer>
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand">The Loco Workshop, Ajmer</div>
+          <div class="footer-brand-sub2">Est. 1876 · Sesquicentennial 2026</div>
+          <p class="footer-desc">
+            One of Asia's oldest and most celebrated railway workshops — serving
+            the Indian Railways for 150 years with skill, dedication and
+            engineering pride. Situated in the heart of Rajasthan, Ajmer.
+          </p>
+          <div class="footer-socials">
+            <a href="#" class="f-social">𝕏</a>
+            <a href="#" class="f-social">in</a>
+            <a href="#" class="f-social">▶</a>
+            <a href="#" class="f-social">📷</a>
+          </div>
+        </div>
+        <div>
+          <div class="f-col-title">Visit</div>
+          <ul class="f-links">
+            <li><a href="#">Heritage Museum</a></li>
+            <li><a href="#">Workshop Floor Tour</a></li>
+            <li><a href="#">Group Bookings</a></li>
+            <li><a href="#">Getting Here</a></li>
+            <li><a href="#">Visitor Guidelines</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="f-col-title">About</div>
+          <ul class="f-links">
+            <li><a href="#">150-Year History</a></li>
+            <li><a href="#">Our Capabilities</a></li>
+            <li><a href="#">Workforce & Apprentice</a></li>
+            <li><a href="#">Awards & Recognition</a></li>
+            <li><a href="#">Annual Report</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="f-col-title">Connect</div>
+          <ul class="f-links">
+            <li><a href="#">Press & Media</a></li>
+            <li><a href="#">Indian Railways ↗</a></li>
+            <li><a href="#">RTI Information</a></li>
+            <li><a href="#">Contact the Workshop</a></li>
+            <li><a href="#">Tenders & Procurement</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">
+          © 2026 The Loco Workshop, Ajmer. Under Indian Railways, Ministry of
+          Railways, Government of India.
+        </div>
+        <div class="footer-rail">
+          <span>⚙</span>
+          <span>Ajmer · Rajasthan · India · Est. 1876</span>
+        </div>
+      </div>
+    </footer>
+    <script src="js/index.js"></script>
+  </body>
+</html>
