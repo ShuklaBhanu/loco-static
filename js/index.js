@@ -2,9 +2,6 @@
 const cursor = document.getElementById("cursor");
 const ring = document.getElementById("cursorRing");
 
-const cursor = document.getElementById("cursor");
-const ring = document.getElementById("cursorRing");
-
 let mx = 0;
 let my = 0;
 let rx = 0;
